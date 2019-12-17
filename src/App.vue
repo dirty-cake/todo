@@ -60,6 +60,7 @@
         </li>
       </ul>
     </main>
+    <VDatePicker/>
   </div>
 </template>
 
@@ -67,10 +68,11 @@
 import VInput from './components/VInput.vue'
 import VButton from './components/VButton.vue'
 import VCollapse from './components/VCollapse.vue'
+import VDatePicker from './components/VDatePicker.vue'
 
 export default {
   components: {
-    VInput, VButton, VCollapse
+    VInput, VButton, VCollapse, VDatePicker
   },
   data: function () {
     return {
