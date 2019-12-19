@@ -23,7 +23,14 @@
                 </div>
               </template>
               <template #default>
-                {{ item.description ? item.description : 'No description' }}
+                <div>
+                  {{ item.description ? item.description : 'No description' }}
+                </div>
+                <div>
+                  {{ item.date.day }}
+                  {{ months[item.date.month] }}
+                  {{ item.date.year }}
+                </div>
               </template>
             </VCollapse>
           </li>
@@ -51,6 +58,7 @@
             <div class="list_item_content">
               <VInput v-model="item.name" theme="black" placeholder="Name" @keyup.enter="addToList"/>
               <VInput v-model="item.description" theme="black" placeholder="Description" @keyup.enter="addToList"/>
+              <VDatePicker v-model="item.date"/>
             </div>
             <div class="list_item_controls">
               <VButton @click="addToList" icon="add">Add task</VButton>
@@ -60,7 +68,6 @@
         </li>
       </ul>
     </main>
-    <VDatePicker/>
   </div>
 </template>
 
@@ -81,8 +88,10 @@ export default {
       search: '',
       item: {
         name: '',
-        description: ''
-      }
+        description: '',
+        date: {}
+      },
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     }
   },
   computed: {
@@ -105,10 +114,11 @@ export default {
   methods: {
     addToList () {
       if (this.item.name !== '') {
-        this.items.push({ name: this.item.name, done: false, key: Date.now(), description: this.item.description })
+        this.items.push({ name: this.item.name, done: false, key: Date.now(), description: this.item.description, date: this.item.date })
         this.item.name = ''
         this.item.description = ''
         this.showInput = false
+        this.date = {}
       }
     },
     deleteMe (key) {
