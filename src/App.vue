@@ -58,7 +58,7 @@
             <div class="list_item_content">
               <VInput v-model="item.name" theme="black" placeholder="Name" @keyup.enter="addToList"/>
               <VInput v-model="item.description" theme="black" placeholder="Description" @keyup.enter="addToList"/>
-              <VDatePicker v-model="item.date"/>
+              <VDatePicker v-model="item.date" :allowed-dates="(date) => date.day % 2 === 0 " :marked-dates="(date) => date.day % 3 === 0 && date.month === 11"/>
             </div>
             <div class="list_item_controls">
               <VButton @click="addToList" icon="add">Add task</VButton>
