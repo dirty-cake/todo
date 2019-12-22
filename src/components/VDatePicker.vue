@@ -17,7 +17,11 @@
           <td
             v-for="day in Array.from({ length: 7 }, (_, index) => week * 7 + index)"
             :key="day"
-            :class="['date_picker_cell', { marked: isMarked(day), selected: isSelected(day), disabled: isOutOfMonth(day) || !isAllowedDate(day) }]"
+            :class="['date_picker_cell', {
+              marked: isMarked(day),
+              selected: isSelected(day),
+              disabled: isOutOfMonth(day) || !isAllowedDate(day)
+            }]"
             @click="select(day)"
           >
             {{ indexToDate(day) }}

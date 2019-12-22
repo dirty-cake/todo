@@ -58,7 +58,7 @@
             <div class="list_item_content">
               <VInput v-model="item.name" theme="black" placeholder="Name" @keyup.enter="addToList"/>
               <VInput v-model="item.description" theme="black" placeholder="Description" @keyup.enter="addToList"/>
-              <VDatePicker v-model="item.date" :allowed-dates="(date) => date.day % 2 === 0 " :marked-dates="(date) => date.day % 3 === 0 && date.month === 11"/>
+              <VDatePicker v-model="item.date" :allowed-dates="isAllowedDate" :marked-dates="isMarkedDate"/>
             </div>
             <div class="list_item_controls">
               <VButton @click="addToList" icon="add">Add task</VButton>
@@ -83,7 +83,10 @@ export default {
   },
   data: function () {
     return {
-      items: [{ name: 'buy coffee', done: false, key: 1 }, { name: 'buy tea', done: false, key: 2 }],
+      items: [
+        { name: 'buy coffee', done: false, key: 1, date: { year: 2019, month: 11, day: 24 } },
+        { name: 'buy tea', done: false, key: 2, date: { year: 2019, month: 11, day: 13 } }
+      ],
       showInput: false,
       search: '',
       item: {
@@ -132,6 +135,24 @@ export default {
     },
     undone (index) {
       this.dones[index].done = false
+    },
+    isAllowedDate (date) {
+      const today = new Date()
+      console.log(today.getFullYear(), date.year, today.getMonth(), date.month, today.getDate(), date.day)
+      if (today.getFullYear() !== date.year) {
+        return (today.getFullYear() < date.year)
+      } else if (today.getMonth() !== date.month) {
+        return (today.getMonth() < date.month)
+      } else if (today.getDate() !== date.day) {
+        return (today.getDate() < date.day)
+      } else {
+        return true
+      }
+    },
+    isMarkedDate (date) {
+      return this.items.some((item) => {
+        return (item.date.year === date.year) && (item.date.month === date.month) && (item.date.day === date.day)
+      })
     }
   }
 }
