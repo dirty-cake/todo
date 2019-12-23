@@ -68,6 +68,9 @@
         </li>
       </ul>
     </main>
+    <div class="test">
+      <VSlider/>
+    </div>
   </div>
 </template>
 
@@ -76,10 +79,11 @@ import VInput from './components/VInput.vue'
 import VButton from './components/VButton.vue'
 import VCollapse from './components/VCollapse.vue'
 import VDatePicker from './components/VDatePicker.vue'
+import VSlider from './components/VSlider.vue'
 
 export default {
   components: {
-    VInput, VButton, VCollapse, VDatePicker
+    VInput, VButton, VCollapse, VDatePicker, VSlider
   },
   data: function () {
     return {
@@ -138,7 +142,6 @@ export default {
     },
     isAllowedDate (date) {
       const today = new Date()
-      console.log(today.getFullYear(), date.year, today.getMonth(), date.month, today.getDate(), date.day)
       if (today.getFullYear() !== date.year) {
         return (today.getFullYear() < date.year)
       } else if (today.getMonth() !== date.month) {
@@ -162,6 +165,10 @@ export default {
 html, body {
   padding: o;
   margin: 0;
+}
+.test {
+  width: 500px;
+  margin-left: 100px;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
