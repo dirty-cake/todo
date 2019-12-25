@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <header class="header">
       <div class="header_content">
         <VInput v-model="search" icon="search" placeholder="Quik find"/>
@@ -69,7 +69,8 @@
       </ul>
     </main>
     <div class="test">
-      <VSlider/>
+      {{ test }}
+      <VSlider v-model="test"/>
     </div>
   </div>
 </template>
@@ -93,6 +94,7 @@ export default {
       ],
       showInput: false,
       search: '',
+      test: 50,
       item: {
         name: '',
         description: '',
