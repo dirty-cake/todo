@@ -1,14 +1,40 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <header class="header">
+      <div class="header_content">
+        <VInput icon="search" placeholder="Quik find"/>
+        <VButton v-if="isSignedIn" theme="red" @click="signout">Sign out</VButton>
+        <VButton v-else-if="$route.name === 'signin'" theme="red" @click="$router.push({ name: 'signup' })">Sign up</VButton>
+        <VButton v-else-if="$route.name === 'signup'" theme="red" @click="$router.push({ name: 'signin' })">Sign in</VButton>
+      </div>
+    </header>
+    <main class="main">
+      <router-view/>
+    </main>
   </div>
 </template>
 
+<script>
+export default {
+  computed: {
+    isSignedIn () {
+      return this.$persistance.login !== undefined && this.$persistance.password !== undefined
+    }
+  },
+  methods: {
+    signout () {
+      delete this.$persistance.login
+      delete this.$persistance.password
+      this.$router.push({ name: 'signin' })
+    }
+  }
+}
+</script>
 <style>
+html, body {
+  padding: 0;
+  margin: 0;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -17,16 +43,23 @@
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  background-color: #d34827;
+  padding: 10px;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.header_content {
+  width: 100%;
+  max-width: 1080px;
+  display: flex;
+  justify-content: space-between;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 10px;
 }
 </style>

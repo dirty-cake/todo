@@ -1,0 +1,29 @@
+<template>
+  <div>
+    <VInput v-model="login" placeholder="Login" theme="black" @keyup.enter="signin"/>
+    <VInput v-model="password" placeholder="Password" theme="black" @keyup.enter="signin"/>
+    <VButton @click="signin">Sign in</VButton>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      login: '',
+      password: ''
+    }
+  },
+  methods: {
+    signin () {
+      if (this.login === 'iryna' && this.password === 'piupiu') {
+        this.$persistance.login = this.login
+        this.$persistance.password = this.password
+        this.$router.push({ name: 'todo' })
+      } else {
+        alert('Use correct login and password')
+      }
+    }
+  }
+}
+</script>
