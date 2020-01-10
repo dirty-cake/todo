@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="heading">Welcome {{ $persistance.login }}!!!</h3>
+    <h3 class="heading">Welcome {{ $persistance.name }}!!!</h3>
     <ul class="list">
       <transition-group name="flip-list">
         <li v-for="(item, index) in todos" :key="item.key" class="list_item">

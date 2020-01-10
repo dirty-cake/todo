@@ -25,9 +25,23 @@ export default {
       } else if (this.password !== this.passwordConfirmation) {
         alert('Check your passwords')
       } else {
-        this.$persistance.login = this.login
-        this.$persistance.password = this.password
-        this.$router.push({ name: 'todo' })
+        const response = fetch('http://localhost:3000/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name: this.name, login: this.login, password: this.password })
+        })
+
+        response.then(response => {
+          if (response.status === 201) {
+            this.$persistance.login = this.login
+            this.$persistance.password = this.password
+            this.$router.push({ name: 'todo' })
+          } else {
+            alert('Server said NO!')
+          }
+        })
       }
     }
   }
