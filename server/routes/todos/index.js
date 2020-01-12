@@ -16,18 +16,18 @@ router.post('/', async (ctx) => {
   const todo = await schemas.create.validateAsync(ctx.request.body)
   db.todos.push(todo)
   ctx.status = 201
-  ctx.body = null
+  ctx.body = todo
 })
 
 router.delete('/:todoId', async (ctx) => {
-  const todoId = await schemas.identifier.validateAsync(ctx.request.params.todoId)
+  const todoId = await schemas.identifier.validateAsync(ctx.params.todoId)
   db.todos = db.todos.filter(todo => todo.id !== todoId)
   ctx.status = 200
   ctx.body = null
 })
 
 router.patch('/:todoId', async (ctx) => {
-  const todoId = await schemas.identifier.validateAsync(ctx.request.params.todoId)
+  const todoId = await schemas.identifier.validateAsync(ctx.params.todoId)
   const todo = db.todos.find(todo => todo.id === todoId)
   if (todo === undefined) {
     ctx.throw(404, 'not found')

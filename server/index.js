@@ -13,7 +13,13 @@ app.use(async (ctx, next) => {
   try {
     await next()
   } catch (err) {
-    ctx.throw(400, err)
+    if (err.isJoi) {
+      ctx.status = 400
+      ctx.body = err.details
+    } else {
+      ctx.status = err.status || 500
+      ctx.body = { message: err.message }
+    }
   }
 })
 

@@ -3,16 +3,16 @@
     <h3 class="heading">Welcome {{ $persistance.name }}!!!</h3>
     <ul class="list">
       <transition-group name="flip-list">
-        <li v-for="(item, index) in todos" :key="item.key" class="list_item">
+        <li v-for="(item, index) in todos" :key="item.id" class="list_item">
           <VCollapse>
             <template #header>
               <div class="list_item_header">
                 <div class="list_item_content">
-                  <input type="checkbox" :value="index" class="checkbox" @change="done(index)">
+                  <input type="checkbox" :value="index" class="checkbox" @change="changeDone(item.id, true)">
                   {{ item.name }}
                 </div>
                 <div class="list_item_controls">
-                  <VButton @click="deleteMe(item.key)" theme="red">Delete me</VButton>
+                  <VButton @click="deleteMe(item.id)" theme="red">Delete me</VButton>
                 </div>
               </div>
             </template>
@@ -28,16 +28,16 @@
             </template>
           </VCollapse>
         </li>
-        <li v-for="(item, index) in dones" :key="item.key" class="list_item">
+        <li v-for="(item, index) in dones" :key="item.id" class="list_item">
           <VCollapse>
             <template #header>
               <div class="list_item_header">
                 <div class="list_item_content">
-                  <input type="checkbox" :value="index" class="checkbox" @change="undone(index)" checked>
+                  <input type="checkbox" :value="index" class="checkbox" @change="changeDone(item.id, false)" checked>
                   <span class="strike">{{ item.name }}</span>
                 </div>
                 <div class="list_item_controls">
-                  <VButton @click="deleteMe(item.key)" theme="red">Delete me</VButton>
+                  <VButton @click="deleteMe(item.id)" theme="red">Delete me</VButton>
                 </div>
               </div>
             </template>
@@ -66,12 +66,9 @@
 
 <script>
 export default {
-  data: function () {
+  data () {
     return {
-      items: [
-        { name: 'buy coffee', done: false, key: 1, date: { year: 2019, month: 11, day: 24 } },
-        { name: 'buy tea', done: false, key: 2, date: { year: 2019, month: 11, day: 13 } }
-      ],
+      items: [],
       showInput: false,
       search: '',
       item: {
@@ -99,27 +96,62 @@ export default {
       })
     }
   },
+  async created () {
+    const response = await fetch(`http://localhost:3000/todos?userId=${this.$persistance.userId}`, {
+      method: 'GET'
+    })
+    if (response.status === 200) {
+      this.items = await response.json()
+    } else {
+      alert('Server said NO!')
+    }
+  },
   methods: {
     addToList () {
       if (this.item.name !== '') {
-        this.items.push({ name: this.item.name, done: false, key: Date.now(), description: this.item.description, date: this.item.date })
-        this.item.name = ''
-        this.item.description = ''
-        this.showInput = false
-        this.date = {}
+        const response = fetch('http://localhost:3000/todos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userId: this.$persistance.userId, name: this.item.name, description: this.item.description, date: this.item.date })
+        })
+        response.then(response => {
+          if (response.status === 201) {
+            response.json().then(item => {
+              this.items.push(item)
+              this.item.name = ''
+              this.item.description = ''
+              this.showInput = false
+              this.date = {}
+            })
+          }
+        })
       }
     },
-    deleteMe (key) {
-      const index = this.items.findIndex(item => {
-        return key === item.key
+    async deleteMe (todoId) {
+      const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
+        method: 'DELETE'
       })
-      this.items.splice(index, 1)
+      if (response.status >= 200 && response.status < 300) {
+        const index = this.items.findIndex(item => {
+          return todoId === item.id
+        })
+        this.items.splice(index, 1)
+      }
     },
-    done (index) {
-      this.todos[index].done = true
-    },
-    undone (index) {
-      this.dones[index].done = false
+    async changeDone (todoId, done) {
+      const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ done })
+      })
+      if (response.status >= 200 && response.status < 300) {
+        const index = this.items.findIndex(item => item.id === todoId)
+        this.$set(this.items, index, await response.json())
+      }
     },
     isAllowedDate (date) {
       const today = new Date()

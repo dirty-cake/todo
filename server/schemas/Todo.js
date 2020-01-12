@@ -12,10 +12,11 @@ exports.name = Joi
 exports.description = Joi
   .string()
   .max(100)
+  .allow('')
 
 exports.date = Joi.object({
   day: Joi.number().integer().positive(),
-  month: Joi.number().integer().min(1).max(12),
+  month: Joi.number().integer().min(0).max(11),
   year: Joi.number().integer().min(1900)
 })
 

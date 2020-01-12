@@ -35,9 +35,13 @@ export default {
 
         response.then(response => {
           if (response.status === 201) {
-            this.$persistance.login = this.login
-            this.$persistance.password = this.password
-            this.$router.push({ name: 'todo' })
+            response.json().then(user => {
+              this.$persistance.name = user.name
+              this.$persistance.login = user.login
+              this.$persistance.password = user.password
+              this.$persistance.userId = user.id
+              this.$router.push({ name: 'todo' })
+            })
           } else {
             alert('Server said NO!')
           }

@@ -1,0 +1,20 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "dev:server": "npm run dev --prefix ./server",
+    "dev:client": "npm run dev --prefix ./client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dirty-cake/todo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dirty-cake/todo/issues"
+  },
+  "homepage": "https://github.com/dirty-cake/todo#readme"
+}

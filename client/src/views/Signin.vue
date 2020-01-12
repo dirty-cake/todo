@@ -26,6 +26,7 @@ export default {
             this.$persistance.name = user.name
             this.$persistance.login = user.login
             this.$persistance.password = user.password
+            this.$persistance.userId = user.id
             this.$router.push({ name: 'todo' })
           })
         } else {

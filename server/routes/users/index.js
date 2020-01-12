@@ -6,6 +6,9 @@ const router = new Router({ prefix: '/users' })
 
 router.post('/', async (ctx) => {
   const user = await schemas.create.validateAsync(ctx.request.body)
+  if (db.users.some(duplication => duplication.login === user.login)) {
+    ctx.throw(400)
+  }
   db.users.push(user)
   ctx.status = 201
   ctx.body = user
