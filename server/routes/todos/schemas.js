@@ -13,8 +13,7 @@ exports.create = Joi.object({
   name: Todo.name.required(),
   description: Todo.description,
   date: Todo.date.required(),
-  done: Todo.done.forbidden().default(false),
-  userId: Todo.userId.required()
+  done: Todo.done.forbidden().default(false)
 })
 
 exports.update = Joi.object({

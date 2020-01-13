@@ -1,7 +1,7 @@
 const uuid = require('uuid/v4')
 
 const db = {
-  users: [],
+  users: [{ l: 0 }],
   todos: []
 }
 

@@ -1,21 +1,23 @@
 const Router = require('koa-router')
+const jwt = require('jsonwebtoken')
 const db = require('../../database')
 const schemas = require('./schemas')
 
 const router = new Router({ prefix: '/users' })
 
-router.post('/', async (ctx) => {
+router.post('/singup', async (ctx) => {
   const user = await schemas.create.validateAsync(ctx.request.body)
   if (db.users.some(duplication => duplication.login === user.login)) {
     ctx.throw(400)
   }
   db.users.push(user)
+  const token = jwt.sign({ userId: user.id }, 'piupiu')
   ctx.status = 201
-  ctx.body = user
+  ctx.body = { ...user, token }
 })
 
-router.get('/signin', async (ctx) => {
-  const { login, password } = await schemas.signin.validateAsync(ctx.request.query)
+router.post('/signin', async (ctx) => {
+  const { login, password } = await schemas.signin.validateAsync(ctx.request.body)
   const user = db.users.find(user => user.login === login)
   if (user === undefined) {
     ctx.status = 400
@@ -24,8 +26,9 @@ router.get('/signin', async (ctx) => {
     ctx.status = 400
     ctx.body = 'ti obosravsia'
   } else {
+    const token = jwt.sign({ userId: user.id }, 'piupiu')
     ctx.status = 200
-    ctx.body = user
+    ctx.body = { ...user, token }
   }
 })
 
