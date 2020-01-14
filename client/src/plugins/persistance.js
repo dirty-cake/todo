@@ -22,6 +22,6 @@ export default function (Vue) {
     }
   })
 
-  Vue.$persistance = persistance
+  Vue.persistance = persistance
   Vue.prototype.$persistance = persistance
 }

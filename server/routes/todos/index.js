@@ -1,37 +1,31 @@
 const Router = require('koa-router')
-const jwt = require('jsonwebtoken')
+const auth = require('../../middlewares/auth')
 const db = require('../../database')
 const schemas = require('./schemas')
 
 
 const router = new Router({ prefix: '/todos' })
 
-router.get('/', async (ctx) => {
-  const token = ctx.request.headers.authorization
-  const { userId } = jwt.verify(token, 'piupiu')
-  const todos = db.todos.filter(todo => todo.userId === userId)
+router.get('/', auth, async (ctx) => {
+  const todos = db.todos.filter(todo => todo.userId === ctx.state.userId)
   ctx.status = 200
   ctx.response.body = todos
 })
 
-router.post('/', async (ctx) => {
-  const token = ctx.request.headers.authorization
-  const { userId } = jwt.verify(token, 'piupiu')
+router.post('/', auth, async (ctx) => {
   const todo = await schemas.create.validateAsync(ctx.request.body)
-  db.todos.push({ ...todo, userId })
+  db.todos.push({ ...todo, userId: ctx.state.userId })
   ctx.status = 201
   ctx.body = todo
 })
 
-router.delete('/:todoId', async (ctx) => {
-  const token = ctx.request.headers.authorization
-  const { userId } = jwt.verify(token, 'piupiu')
+router.delete('/:todoId', auth, async (ctx) => {
   const todoId = await schemas.identifier.validateAsync(ctx.params.todoId)
   const todoIndex = db.todos.findIndex(todo => todo.id === todoId)
   if (todoIndex === -1) {
     ctx.throw(404)
   }
-  if (db.todos[todoIndex].userId !== userId) {
+  if (db.todos[todoIndex].userId !== ctx.state.userId) {
     ctx.throw(403)
   }
   db.todos.splice(todoIndex, 1)
@@ -39,15 +33,13 @@ router.delete('/:todoId', async (ctx) => {
   ctx.body = null
 })
 
-router.patch('/:todoId', async (ctx) => {
-  const token = ctx.request.headers.authorization
-  const { userId } = jwt.verify(token, 'piupiu')
+router.patch('/:todoId', auth, async (ctx) => {
   const todoId = await schemas.identifier.validateAsync(ctx.params.todoId)
   const todo = db.todos.find(todo => todo.id === todoId)
   if (todo === undefined) {
     ctx.throw(404, 'not found')
   }
-  if (todo.userId !== userId) {
+  if (todo.userId !== ctx.state.userId) {
     ctx.throw(403)
   }
   const value = await schemas.update.validateAsync(ctx.request.body)

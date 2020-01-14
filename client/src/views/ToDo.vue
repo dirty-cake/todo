@@ -97,8 +97,11 @@ export default {
     }
   },
   async created () {
-    const response = await fetch(`http://localhost:3000/todos?userId=${this.$persistance.userId}`, {
-      method: 'GET'
+    const response = await fetch(`http://localhost:3000/todos`, {
+      method: 'GET',
+      headers: {
+        Authorization: this.$persistance.token
+      }
     })
     if (response.status === 200) {
       this.items = await response.json()
@@ -112,9 +115,10 @@ export default {
         const response = fetch('http://localhost:3000/todos', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: this.$persistance.token
           },
-          body: JSON.stringify({ userId: this.$persistance.userId, name: this.item.name, description: this.item.description, date: this.item.date })
+          body: JSON.stringify({ name: this.item.name, description: this.item.description, date: this.item.date })
         })
         response.then(response => {
           if (response.status === 201) {
@@ -131,7 +135,10 @@ export default {
     },
     async deleteMe (todoId) {
       const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          Authorization: this.$persistance.token
+        }
       })
       if (response.status >= 200 && response.status < 300) {
         const index = this.items.findIndex(item => {
@@ -144,7 +151,8 @@ export default {
       const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: this.$persistance.token
         },
         body: JSON.stringify({ done })
       })

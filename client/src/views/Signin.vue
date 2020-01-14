@@ -16,17 +16,20 @@ export default {
   },
   methods: {
     signin () {
-      const response = fetch(`http://localhost:3000/users/signin?login=${this.login}&password=${this.password}`, {
-        method: 'GET'
+      const response = fetch(`http://localhost:3000/users/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ login: this.login, password: this.password })
       })
 
       response.then(response => {
         if (response.status === 200) {
           response.json().then(user => {
-            this.$persistance.name = user.name
-            this.$persistance.login = user.login
-            this.$persistance.password = user.password
             this.$persistance.userId = user.id
+            this.$persistance.name = user.name
+            this.$persistance.token = user.token
             this.$router.push({ name: 'todo' })
           })
         } else {
