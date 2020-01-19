@@ -15,27 +15,19 @@ export default {
     }
   },
   methods: {
-    signin () {
-      const response = fetch(`http://localhost:3000/users/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ login: this.login, password: this.password })
-      })
-
-      response.then(response => {
-        if (response.status === 200) {
-          response.json().then(user => {
-            this.$persistance.userId = user.id
-            this.$persistance.name = user.name
-            this.$persistance.token = user.token
-            this.$router.push({ name: 'todo' })
-          })
-        } else {
-          response.text().then(text => alert(text))
-        }
-      })
+    async signin () {
+      try {
+        const user = await this.$fetch(`/users/signin`, {
+          method: 'POST',
+          body: { login: this.login, password: this.password }
+        })
+        this.$persistance.userId = user.id
+        this.$persistance.name = user.name
+        this.$persistance.token = user.token
+        this.$router.push({ name: 'todo' })
+      } catch (error) {
+        alert(error.message)
+      }
     }
   }
 }

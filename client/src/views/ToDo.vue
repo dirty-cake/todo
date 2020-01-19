@@ -97,68 +97,55 @@ export default {
     }
   },
   async created () {
-    const response = await fetch(`http://localhost:3000/todos`, {
-      method: 'GET',
-      headers: {
-        Authorization: this.$persistance.token
-      }
-    })
-    if (response.status === 200) {
-      this.items = await response.json()
-    } else {
-      alert('Server said NO!')
+    try {
+      this.items = await this.$fetch(`/todos`, {
+        method: 'GET'
+      })
+    } catch (error) {
+      alert(error.message)
     }
   },
   methods: {
-    addToList () {
+    async addToList () {
       if (this.item.name !== '') {
-        const response = fetch('http://localhost:3000/todos', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: this.$persistance.token
-          },
-          body: JSON.stringify({ name: this.item.name, description: this.item.description, date: this.item.date })
-        })
-        response.then(response => {
-          if (response.status === 201) {
-            response.json().then(item => {
-              this.items.push(item)
-              this.item.name = ''
-              this.item.description = ''
-              this.showInput = false
-              this.date = {}
-            })
-          }
-        })
+        try {
+          const item = await this.$fetch('/todos', {
+            method: 'POST',
+            body: { name: this.item.name, description: this.item.description, date: this.item.date }
+          })
+          this.items.push(item)
+          this.item.name = ''
+          this.item.description = ''
+          this.showInput = false
+          this.date = {}
+        } catch (error) {
+          alert(error.message)
+        }
       }
     },
     async deleteMe (todoId) {
-      const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: this.$persistance.token
-        }
-      })
-      if (response.status >= 200 && response.status < 300) {
+      try {
+        await this.$fetch(`/todos/${todoId}`, {
+          method: 'DELETE'
+        })
         const index = this.items.findIndex(item => {
           return todoId === item.id
         })
         this.items.splice(index, 1)
+      } catch (error) {
+        alert(error.message)
       }
     },
     async changeDone (todoId, done) {
-      const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: this.$persistance.token
-        },
-        body: JSON.stringify({ done })
-      })
-      if (response.status >= 200 && response.status < 300) {
+      try {
+        const updatedTodo = await this.$fetch(`/todos/${todoId}`, {
+          method: 'PATCH',
+          body: { done }
+        })
         const index = this.items.findIndex(item => item.id === todoId)
-        this.$set(this.items, index, await response.json())
+        this.$set(this.items, index, updatedTodo)
+      } catch (error) {
+        alert(error.message)
       }
     },
     isAllowedDate (date) {

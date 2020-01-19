@@ -5,7 +5,7 @@ const schemas = require('./schemas')
 
 const router = new Router({ prefix: '/users' })
 
-router.post('/singup', async (ctx) => {
+router.post('/signup', async (ctx) => {
   const user = await schemas.create.validateAsync(ctx.request.body)
   if (db.users.some(duplication => duplication.login === user.login)) {
     ctx.throw(400)

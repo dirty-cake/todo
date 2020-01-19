@@ -12,8 +12,7 @@ const routes = [
     name: 'todo',
     component: ToDo,
     beforeEnter (to, from, next) {
-      const isSignedIn = Vue.$persistance.login !== undefined && Vue.$persistance.password !== undefined
-      if (isSignedIn) {
+      if (Vue.persistance.token) {
         return next()
       } else {
         return next({ name: 'signin' })
@@ -25,11 +24,10 @@ const routes = [
     name: 'signup',
     component: Signup,
     beforeEnter (to, from, next) {
-      const isSignedIn = Vue.$persistance.login !== undefined && Vue.$persistance.password !== undefined
-      if (isSignedIn) {
-        return next({ name: 'todo' })
-      } else {
+      if (!Vue.persistance.token) {
         return next()
+      } else {
+        return next({ name: 'todo' })
       }
     }
   },
@@ -38,11 +36,10 @@ const routes = [
     name: 'signin',
     component: Signin,
     beforeEnter (to, from, next) {
-      const isSignedIn = Vue.$persistance.login !== undefined && Vue.$persistance.password !== undefined
-      if (isSignedIn) {
-        return next({ name: 'todo' })
-      } else {
+      if (!Vue.persistance.token) {
         return next()
+      } else {
+        return next({ name: 'todo' })
       }
     }
   }

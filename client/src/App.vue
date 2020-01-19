@@ -2,10 +2,12 @@
   <div id="app">
     <header class="header">
       <div class="header_content">
-        <VInput icon="search" placeholder="Quik find"/>
-        <VButton v-if="isSignedIn" theme="red" @click="signout">Sign out</VButton>
-        <VButton v-else-if="$route.name === 'signin'" theme="red" @click="$router.push({ name: 'signup' })">Sign up</VButton>
-        <VButton v-else-if="$route.name === 'signup'" theme="red" @click="$router.push({ name: 'signin' })">Sign in</VButton>
+        <VInput v-if="isSignedIn" icon="search" placeholder="Quik find" class="header_content_search"/>
+        <div class="header_content_controls">
+          <VButton v-if="isSignedIn" theme="red" @click="signout">Sign out</VButton>
+          <VButton v-else-if="$route.name === 'signin'" theme="red" @click="$router.push({ name: 'signup' })">Sign up</VButton>
+          <VButton v-else-if="$route.name === 'signup'" theme="red" @click="$router.push({ name: 'signin' })">Sign in</VButton>
+        </div>
       </div>
     </header>
     <main class="main">
@@ -18,13 +20,14 @@
 export default {
   computed: {
     isSignedIn () {
-      return this.$persistance.login !== undefined && this.$persistance.password !== undefined
+      return this.$persistance.token !== undefined
     }
   },
   methods: {
     signout () {
-      delete this.$persistance.login
-      delete this.$persistance.password
+      delete this.$persistance.userId
+      delete this.$persistance.name
+      delete this.$persistance.token
       this.$router.push({ name: 'signin' })
     }
   }
@@ -54,8 +57,16 @@ html, body {
 .header_content {
   width: 100%;
   max-width: 1080px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "search controls";
+}
+.header_content_search {
+  grid-area: search;
+}
+.header_content_controls {
+  grid-area: controls;
+  justify-self: end;
 }
 .main {
   max-width: 1080px;

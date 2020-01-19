@@ -9,6 +9,7 @@ import VDatePicker from '@/components/VDatePicker.vue'
 import VSlider from '@/components/VSlider.vue'
 
 import PersistancePlugin from '@/plugins/persistance.js'
+import FetchPlugin from '@/plugins/fetch.js'
 
 Vue.config.productionTip = false
 
@@ -19,6 +20,7 @@ Vue.component(VDatePicker.name, VDatePicker)
 Vue.component(VSlider.name, VSlider)
 
 Vue.use(PersistancePlugin)
+Vue.use(FetchPlugin)
 
 const app = new Vue({
   router,
