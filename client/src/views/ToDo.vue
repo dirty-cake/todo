@@ -61,6 +61,13 @@
         <VButton v-else @click="showInput = true" icon="add">Add task</VButton>
       </li>
     </ul>
+    <div class="pagination">
+      <VButton theme="red" @click="pagination.offset -= pagination.limit, getList()">Back</VButton>
+      <span>{{ pagination.offset / pagination.limit + 1 }}</span>
+      <VButton theme="red" @click="pagination.offset += pagination.limit, getList()">Next</VButton>
+    </div>
+    <br>
+    {{ Math.ceil(count / pagination.limit) }}
   </div>
 </template>
 
@@ -69,6 +76,8 @@ export default {
   data () {
     return {
       items: [],
+      count: 0,
+      pagination: { offset: 0, limit: 10 },
       showInput: false,
       search: '',
       item: {
@@ -97,15 +106,20 @@ export default {
     }
   },
   async created () {
-    try {
-      this.items = await this.$fetch(`/todos`, {
-        method: 'GET'
-      })
-    } catch (error) {
-      alert(error.message)
-    }
+    this.getList()
   },
   methods: {
+    async getList () {
+      try {
+        const todos = await this.$fetch(`/todos?offset=${this.pagination.offset}&limit=${this.pagination.limit}`, {
+          method: 'GET'
+        })
+        this.count = todos.count
+        this.items = todos.rows
+      } catch (error) {
+        alert(error.message)
+      }
+    },
     async addToList () {
       if (this.item.name !== '') {
         try {
@@ -203,4 +217,12 @@ export default {
 .flip-list-move {
   transition: transform .5s ease-in-out;
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+.pagination > * {
+  margin-right: 10px
+}
+
 </style>

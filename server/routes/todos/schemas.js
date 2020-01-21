@@ -3,7 +3,8 @@ const Joi = require('@hapi/joi')
 const Todo = require('../../schemas/Todo')
 
 exports.filters = Joi.object({
-  userId: Todo.userId
+  limit: Joi.number().integer().positive().default(10),
+  offset: Joi.number().integer().min(0).default(0)
 })
 
 exports.identifier = Todo.id

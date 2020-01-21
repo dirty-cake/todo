@@ -7,9 +7,13 @@ const schemas = require('./schemas')
 const router = new Router({ prefix: '/todos' })
 
 router.get('/', auth, async (ctx) => {
+  const filters = await schemas.filters.validateAsync(ctx.request.query)
   const todos = db.todos.filter(todo => todo.userId === ctx.state.userId)
   ctx.status = 200
-  ctx.response.body = todos
+  ctx.response.body = {
+    count: todos.length,
+    rows: todos.slice(filters.offset, filters.offset + filters.limit)
+  }
 })
 
 router.post('/', auth, async (ctx) => {
